@@ -1,4 +1,13 @@
 <?php
+
+
+require_once __DIR__ . '/includes/sessao.php';
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 session_start();
 require_once 'config/conexao.php';
 
@@ -20,6 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($usuario && password_verify($senha, $usuario['senha'])) {
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario_nome'] = $usuario['nome'];
+
+                session_regenerate_id(true);
+
+                $_SESSION['usuario_id'] = $usuario['id'];
+
+                header('Location: main.php');
+                exit;
                 
                 // Redireciona para uma página protegida (vamos criar depois)
                 header("Location: index.php?logado=1");
@@ -34,6 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $mensagem = "<p style='color: red;'>Preencha todos os campos!</p>";
     }
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -124,5 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
         <a href="index.php" class="back-link">Voltar à Página Inicial</a>
     </div>
+
+    
 </body>
 </html>
+
